@@ -1,0 +1,205 @@
+
+#include <GL\freeglut.h>
+#include <GL\glut.h>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+const float WIN_WIDTH = 800;
+const float WIN_HEIGHT = 600;
+
+float ax = 300, ay = 30;
+
+int vlspeed = 1;
+int vrspeed = 1;
+int gravity = 1;
+bool jump = 0;
+int ca_jump = 20;
+
+int KeyDown[256];
+
+void Input()
+{
+      if(KeyDown['a']) ax -= vlspeed;
+      if(KeyDown['d']) ax += vrspeed;
+      if(KeyDown['w']) if(!jump && gravity){ jump = true; ca_jump = 20; }
+}
+
+class Cube
+{
+public:
+      float x, y, rad;
+      Cube(float x_, float y_):x(x_), y(y_), rad(10) {}
+      void Draw();
+};
+
+void Cube::Draw()
+{
+      glColor3f(0.0, 0.0, 1.0);
+      glBegin(GL_LINE_LOOP);
+       glVertex2f(this->x, this->y);
+       glVertex2f(this->x-rad, this->y);
+       glVertex2f(this->x-rad, this->y-rad);
+       glVertex2f(this->x, this->y-rad);
+      glEnd();
+}
+
+class Character
+{
+public:
+      float x, y, rad;
+      Character(float x_, float y_):x(x_), y(y_), rad(15) {}
+      void Draw();
+};
+
+void Character::Draw()
+{
+      glColor3f(1.0, 0.0, 0.0);
+      glBegin(GL_LINE_LOOP);
+       glVertex2f(this->x, this->y);
+       glVertex2f(this->x-rad, this->y);
+       glVertex2f(this->x-rad, this->y-rad);
+       glVertex2f(this->x, this->y-rad);
+      glEnd();
+}
+
+vector<Cube> cubes;
+vector<Character> chara;
+
+bool Psychic(float x, float y, float rad, float x2, float y2, float rad2)
+{      
+      return ((x - rad <= x2) && (x >= x2 - rad2) && ((y - rad <= y2) && (y >= y2 - rad2)));
+}
+
+void Draw()
+{
+      glClear(GL_COLOR_BUFFER_BIT);
+
+      vector<Cube>::iterator cu = cubes.begin();      
+      while(cu != cubes.end())
+      {
+       cu->Draw();
+       cu++;
+      }
+
+      vector<Character>::iterator ch = chara.begin();
+      while(ch != chara.end())
+      {
+       ch->Draw();
+       ch++;
+      }
+
+      ch = chara.begin();
+      cu = cubes.begin();
+
+      vrspeed = 1;
+      vlspeed = 1;
+      while(cu != cubes.end() && ch != chara.end())
+      {
+       if(Psychic(cu->x, cu->y, cu->rad, ch->x, ch->y+1, ch->rad))
+       {
+        gravity = 0;
+       }
+       if(Psychic(cu->x, cu->y, cu->rad, ch->x, ch->y-1, ch->rad))
+       {
+        gravity = 1;
+        jump = false;
+       }
+       if(Psychic(cu->x, cu->y, cu->rad, ch->x-2, ch->y, ch->rad))
+       {
+        vlspeed = 0;
+       }
+       if(Psychic(cu->x, cu->y, cu->rad, ch->x+2, ch->y, ch->rad))
+       {
+        vrspeed = 0;
+       }
+       cu++;
+      }
+
+      glutSwapBuffers();
+}
+
+void Initialize()
+{
+      Character ch(ax, ay);
+      chara.push_back(ch);
+
+      glClearColor(0.0, 0.0, 0.0, 1.0);
+      glMatrixMode(GL_PROJECTION);
+      glLoadIdentity();
+      glOrtho(0, WIN_WIDTH, WIN_HEIGHT, 0, -.0, 200.0);
+      glMatrixMode(GL_MODELVIEW);
+}
+
+void Timer(int)
+{
+      glutPostRedisplay();
+      glutTimerFunc(10, Timer, 0);
+      for(vector<Character>::iterator ch = chara.begin(); ch != chara.end(); ch++)
+      {
+       ch->x = ax;
+       ch->y = ay;
+       if(gravity)
+       {
+        ch->y = ay += 1;
+       }
+       if(jump && !gravity)
+       {
+        gravity = 0;
+        if(ca_jump != 0){
+         ch->y = ay -= 3;
+         ca_jump--;
+        }
+        else jump = false;
+       }
+       else gravity = 1;
+      }
+           
+      Input();
+}
+
+void Mouse(int button, int state, int x, int y)
+{      
+      switch(button)
+      {
+      case GLUT_LEFT_BUTTON:
+       if (state == GLUT_DOWN)
+       {
+        int dx, dy;
+        dx = (x/10)+1;
+        dy = (y/10)+1;
+        Cube su(dx*10, dy*10);
+        cubes.push_back(su);
+       }
+       break;
+      }
+}
+
+void Keyboard(unsigned char key, int x, int y)
+{
+      KeyDown[key] = 1;
+}
+void KeyboardUp(unsigned char key, int x, int y)
+{
+      KeyDown[key] = 0;
+}
+
+int main(int argc, char** argv)
+{
+      glutInit(&argc, argv);
+      glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
+      glutInitWindowSize(WIN_WIDTH, WIN_HEIGHT);
+      glutInitWindowPosition(200, 200);
+      glutCreateWindow("ON:E");
+
+      glutDisplayFunc(Draw);
+      glutTimerFunc(10, Timer, 0);
+      glutMouseFunc(Mouse);
+      glutKeyboardFunc(Keyboard);
+      glutKeyboardUpFunc(KeyboardUp);
+      Initialize();
+
+      glutMainLoop();
+      return 0;
+}
