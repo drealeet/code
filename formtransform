@@ -1,0 +1,271 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication1
+{
+        
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        int s = 0;
+         int m = 0;
+        int h = 0;
+        int day = 0;
+        int mec = 0;
+        int god = 0;
+//-----------------------------
+        int s2 = 0;
+        int m2 = 0;
+        int h2 = 0;
+        int day2 = 0;
+        int mec2 = 0;
+        int god2 = 0;
+        //-----------------------------
+        int s3 = 0;
+        int m3 = 0;
+        int h3 = 0;
+        int day3 = 0;
+        int mec3 = 0;
+        int god3 = 0;
+        int rz = 0;
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                if (s == 60) { s = 0; m++; }
+                if (m == 60) { m = 0; h++; }
+                if (h == 24) { h = 0; day++; }
+                if (day == 30) { day = 0; mec++; }
+                if (mec == 12) { mec = 0; god++; }
+                s++;
+
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+                label3.Text = "-_-_-_-_-_-";
+            }else
+            {
+                if (s2 == 60) { s2 = 0; m2++; }
+                if (m2 == 60) { m2 = 0; h2++; }
+                if (h2 == 24) { h2 = 0; day2++; }
+                if (day2 == 30) { day2 = 0; mec2++; }
+                if (mec2 == 12) { mec2 = 0; god2++; }
+                s2++;
+
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                if (m == 60) { m = 0; h++; }
+                if (h == 24) { h = 0; day++; }
+                if (day == 30) { day = 0; mec++; }
+                if (mec == 12) { mec = 0; god++; }
+                m++;
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+                label3.Text = "-_-_-_-_-_-";
+            }else
+            {
+                if (m2 == 60) { m2 = 0; h2++; }
+                if (h2 == 24) { h2 = 0; day2++; }
+                if (day2 == 30) { day2 = 0; mec2++; }
+                if (mec2 == 12) { mec2 = 0; god2++; }
+                m2++;
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                if (h == 24) { h = 0; day++; }
+                if (day == 30) { day = 0; mec++; }
+                if (mec == 12) { mec = 0; god++; }
+                h++;
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+            }else
+            {
+                if (h2 == 24) { h2 = 0; day2++; }
+                if (day2 == 30) { day2 = 0; mec2++; }
+                if (mec2 == 12) { mec2 = 0; god2++; }
+                h2++;
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                if (day == 30) { day = 0; mec++; }
+                if (mec == 12) { mec = 0; god++; }
+                day++;
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+                label3.Text = "-_-_-_-_-_-";
+            }else
+            {
+                if (day2 == 30) { day2 = 0; mec2++; }
+                if (mec2 == 12) { mec2 = 0; god2++; }
+                day2++;
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                if (mec == 12) { mec = 0; god++; }
+                mec++;
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+                label3.Text = "-_-_-_-_-_-";
+            }else
+            {
+                if (mec2 == 12) { mec2 = 0; god2++; }
+                mec2++;
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (rz == 0)
+            {
+                god++;
+                label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+                label3.Text = "-_-_-_-_-_-";
+            }else
+            {
+                god2++;
+                label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+                label3.Text = "-_-_-_-_-_-";
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            s = 0; m = 0; h = 0; day = 0; mec = 0; god = 0;
+            s2 = 0; m2 = 0; h2 = 0; day2 = 0; mec2 = 0; god2 = 0;
+            label1.Text = god + ":" + mec + ":" + day + ":" + h + ":" + m + ":" + s;
+            label2.Text = god2 + ":" + mec2 + ":" + day2 + ":" + h2 + ":" + m2 + ":" + s2;
+            label3.Text = "-_-_-_-_-_-";
+         
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            if (rz == 1)
+            {
+                god3 = god + god2;
+                mec3 = mec + mec2;
+                day3 = day + day2;
+                h3 = h + h2;
+                m3 = m + m2;
+                s3 = s + s2;
+
+                while (s3 > 60) { s3 -= 60; m3++; }
+                while (m3 > 60) { m3 -= 60; h3++; }
+                while (h3 > 24) { h3 -= 24; day3++; }
+                while (day3 > 30) { day3 -= 30; mec3++; }
+                while (mec3 > 12) { mec3 -= 12; god3++; }
+               
+                label3.Text = god3 + ":" + mec3 + ":" + day3 + ":" + h3 + ":" + m3 + ":" + s3;
+                rz = 0;
+            }
+            if (rz == 2)
+            {
+                god3 = god - god2;
+                mec3 = mec - mec2;
+                day3 = day - day2;
+                h3 = h - h2;
+                m3 = m - m2;
+                s3 = s - s2;
+
+               
+    
+                while (god3 < 0) {  god3 = 0;  }
+                while (mec3 < 0) { mec3 += 12; god3--; }
+                while (day3 < 0) { day3 += 30; mec3--; }
+                while (h3 < 0) { h3 += 24; day3--; }
+                while (m3 < 0) { m3 += 60; h3--; }
+                while (s3 < 0) { s3 += 60; m3--; }
+                label3.Text = god3 + ":" + mec3 + ":" + day3 + ":" + h3 + ":" + m3 + ":" + s3;
+                rz = 0;
+            }
+            if (rz == 3)
+            {
+                god3 = god * god2;
+                mec3 = mec * mec2;
+                day3 = day * day2;
+                h3 = h * h2;
+                m3 = m * m2;
+                s3 = s * s2;
+
+                while (s3 > 60) { s3 -= 60; m3++; }
+                while (m3 > 60) { m3 -= 60; h3++; }
+                while (h3 > 24) { h3 -= 24; day3++; }
+                while (day3 > 30) { day3 -= 30; mec3++; }
+                while (mec3 > 12) { mec3 -= 12; god3++; }
+
+                label3.Text = god3 + ":" + mec3 + ":" + day3 + ":" + h3 + ":" + m3 + ":" + s3;
+                rz = 0;
+            }
+            god3 = 0;
+            mec3 = 0;
+            day3 = 0;
+            h3 = 0;
+            m3 = 0;
+            s3 = 0;
+            //----
+            god2 = 0;
+            mec2 = 0;
+            day2 = 0;
+            h2 = 0;
+            m2 = 0;
+            s2 = 0;
+            //-----
+            god = 0;
+            mec = 0;
+            day = 0;
+            h = 0;
+            m = 0;
+            s = 0;
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            rz = 1;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            rz = 2;
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            rz = 3;
+        }
+    }
+}
