@@ -1,0 +1,519 @@
+#pragma once
+#include<cstdlib>
+#include <glut.h>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <string>
+#include <cmath>
+#include <sstream>
+
+using namespace std;
+
+const int maxSIZE = 20; 
+int WinW;               
+int WinH;               
+float R;                
+
+
+
+int mx = 0;
+int my = 0;
+bool mdown = false;
+
+
+void mouse (int button, int state, int xc, int yc){
+ mx = xc;
+ my = yc;
+mdown = state == GLUT_DOWN;
+}
+
+
+template <class T>
+class Graph 
+{
+public:
+	vector<T> vertList;          
+	char Matrix[maxSIZE][maxSIZE]; /
+	vector<int> labelList;        
+
+public:
+	Graph();                                                    
+	~Graph();                                                   
+	void Print();                                                
+	bool isEmpty();                                             
+	bool isFull();                                               
+	int GetVertPos(const T& vertex);                             
+	template<class T>
+	int GetAmountVerts() { return this->vertList.size(); }       
+	int GetAmountEdges();                                        
+	int GetWeight(const T& vertex1, const T& vertex2);          
+	vector<T> GetNbrs(const T& vertex);                        
+
+	void addVertex(const T&);                                   
+	void addEdge(const T& vertex1, const T& vertex2, int weight);
+
+	void FillLabels(T& startVertex);                             
+	int Dijkstra(T& startVert);                                  
+	bool AllVisited(bool* mass);                                
+
+	void drawGraph();                                            
+
+};
+
+Graph<int> graph;                                                           
+
+struct vertCoord                                               
+	bool curc;
+	int x, y;
+	vertCoord(int x1, int y1)
+	{
+		x = x1;
+		y = y1;
+	}
+};
+vector<vertCoord> vertC;                                       
+
+template<class T>
+Graph<T>::Graph()                                               
+	for (int i = 0; i < maxSIZE; ++i)                           
+		for (int j = 0; j < maxSIZE; ++j) 
+		{
+			this->Matrix[i][j] = 0;
+		}
+	}
+}
+void drawMainText(
+		float x,
+		float y,
+		float z,
+		void *font,
+		char *string) {
+ 
+	char *c;
+	glRasterPos3f(x, y,z);
+	for (c=string; *c != '\0'; c++) {
+		glutBitmapCharacter(font, *c);
+	}
+}
+template<class T>
+Graph<T>::~Graph() 
+{
+}
+
+template<class T>
+void Graph<T>::Print() 
+{
+	if (!this->isEmpty()) 
+	{
+		cout << "Матрица смежности: " << endl;
+		for (int i = 0, vertListSize = this->vertList.size(); i < vertListSize; ++i) 
+		{
+			cout <<'v' << this->vertList[i];
+			for (int j = 0; j < vertListSize; ++j) 
+			{
+				cout << setw(5) << this->Matrix[i][j];
+			}
+			cout << endl;
+		}
+		cout << "Рёбер в графе: " << graph.GetAmountEdges() << endl;
+	}
+	else cout << "Граф пуст " << endl;
+}
+
+
+template <class T>
+int Graph<T>::GetVertPos(const T& vertex) 
+{
+	for (int i = 0; i < this->vertList.size(); ++i) 
+	{
+		if (this->vertList[i] == vertex)
+			return i;
+	}
+	return -1;
+}
+
+template<class T>
+bool Graph<T>::isEmpty() 
+{
+	if (this->vertList.size() != 0)
+		return false;
+	else
+		return true;
+}
+
+template<class T>
+bool Graph<T>::isFull() 
+{
+	return (vertList.size() == maxSIZE);
+}
+
+template<class T>
+int Graph<T>::GetAmountEdges() 
+{
+	int amount = 0;              
+	if (!this->isEmpty())         
+	{                             
+		for (int i = 0, vertListSize = this->vertList.size(); i < vertListSize; ++i) 
+		{
+			for (int j = 0; j < vertListSize; ++j) 
+			{
+				if (this->Matrix[i][j] != 0)   
+					amount += 1;                
+			}
+		}
+		return amount;                          /
+	}
+	else
+		return 0;                               
+}
+
+template<class T>
+int Graph<T>::GetWeight(const T& vertex1, const T& vertex2) 
+{
+	if (!this->isEmpty()) 
+	{
+		int vertPos1 = GetVertPos(vertex1);
+		int vertPos2 = GetVertPos(vertex2);
+		return Matrix[vertPos1][vertPos2];
+	}
+	return 0;
+}
+
+template<class T>
+vector<T> Graph<T>::GetNbrs(const T& vertex) 
+{
+	std::vector<T> nbrsList;                         
+	int pos = this->GetVertPos(vertex);                
+	if (pos != (-1)) 
+	{                                                 
+		for (int i = 0, vertListSize = this->vertList.size(); i < vertListSize; ++i) 
+		{
+			if (this->Matrix[pos][i] != 0)             
+				nbrsList.push_back(this->vertList[i]);
+		}
+	}
+	return nbrsList;                                  
+}
+
+
+
+template<class T>
+void Graph<T>::addVertex(const T& vertex) 
+{
+	if (!this->isFull()) 
+	{
+		this->vertList.push_back(vertex);
+	}
+	else 
+	{
+		cout << "Граф уже заполнен. Невозможно добавить новую вершину " << endl;
+		return;
+	}
+}
+
+template<class T>
+void Graph<T>::addEdge(const T& vertex1, const T& vertex2, int weight) 
+{
+	if (this->GetVertPos(vertex1) != (-1) && this->GetVertPos(vertex2) != (-1)) 
+	{
+		int vertPos1 = GetVertPos(vertex1);
+		int vertPos2 = GetVertPos(vertex2);
+		if (this->Matrix[vertPos1][vertPos2] != 0) 
+		{
+			cout << "Ребро между этими вершинами уже существует" << endl;
+			return;
+		}
+		else 
+		{
+			this->Matrix[vertPos1][vertPos2] = weight;
+		}
+	}
+	else 
+	{
+		cout << "Обеих вершин (или одной из них) нет в графе " << endl;
+		return;
+	}
+}
+
+   
+template<class T>
+void Graph<T>::FillLabels(T& startVertex)
+{
+	int size = this->vertList.size();    
+	for (int i = 0; i < size; ++i) 
+	{
+		labelList.push_back(1000000);   
+	}
+	int pos = GetVertPos(startVertex);   
+	labelList[pos] = 0;                  
+}
+
+                  
+template<class T>
+int Graph<T>::Dijkstra(T& startVert) 
+{
+	if (GetVertPos(startVert) != -1)            
+	{
+		FillLabels(startVert);                   
+		int p = vertList.size();
+		bool* visitVert = new bool[p];            
+		for (int i = 0; i < vertList.size(); i++) 
+		{
+			visitVert[i] = false;     
+		}                                          
+		T temp = startVert;                      
+		{
+			int counter = 0;                                     
+			int min = 1000000;                    
+			vector<T> sosedi = GetNbrs(temp);    
+
+			for (int i = 0; i < sosedi.size(); i++) 
+			{
+				int start = labelList[GetVertPos(temp)];      
+				int weight = GetWeight(temp, sosedi[i]);      
+				int nIndex = GetVertPos(sosedi[i]);           
+				int nextLabel = labelList[nIndex];
+				if (start + weight < nextLabel)                 
+				{
+					labelList[nIndex] = start + weight; 
+				}
+				if (labelList[nIndex] < min && visitVert[nIndex] != true) 
+				{
+					min = labelList[nIndex];                                      
+				}
+				counter++;                                                                       
+			}
+			if (counter == sosedi.size())                                                        
+			{                                                                                   
+				visitVert[GetVertPos(temp)] = true;                                             
+			}
+			for (int i = 0; i < sosedi.size(); i++)                                             
+			{
+				if (labelList[GetVertPos(sosedi[i])] == min || visitVert[GetVertPos(sosedi[i])] != true)
+				{
+					temp = sosedi[i];
+				}
+			}
+		}
+		
+		for (int i = 0; i < GetVertPos(startVert); i++) 
+		{
+			cout << "Кратчайшее расстояние от " << startVert << " до " << vertList[i] << " равно " << labelList[GetVertPos(vertList[i])] << endl;
+		}
+		for (int i = GetVertPos(startVert)+1; i < vertList.size(); i++)
+		{
+			cout << "Кратчайшее расстояние от " << startVert << " до " << vertList[i] << " равно " << labelList[GetVertPos(vertList[i])] << endl;
+		}
+	}
+	return 0;
+
+}
+
+   
+template <class T>
+bool Graph<T>::AllVisited(bool* mass) 
+{
+	for (int i = 0; i < labelList.size(); i++) 
+	{
+		if (labelList[i] == 1000000)
+			return false;
+	}
+	return true;                  
+}
+
+void Coords() 
+{
+	vertCoord v1(50, 400), v2(300, 300), v3(600, 600), v4(300, 590), v5(750, 450), v6(750, 230);
+	vertC.push_back(v1);
+	vertC.push_back(v2);
+	vertC.push_back(v3);
+	vertC.push_back(v4);
+	vertC.push_back(v5);
+	vertC.push_back(v6);
+}
+
+void Radius(int n)
+{
+	if (WinW > WinH)
+		R = 5 * (WinH / 13) / n;
+	else
+		R = 5 * (WinW / 13) / n;
+}
+void drawBlueLine(int text, int x0, int y0, int x1, int y1) 
+{
+	glColor3f(0.0, 0.0, 128.0); //это цветные ребра
+	glBegin(GL_LINES);
+	glVertex2i(x0, y0);
+	glVertex2i(x1, y1);
+	glEnd();
+
+	float vx = x0 - x1;
+	float vy = y0 - y1;
+	float s = 1.0f / sqrt(vx * vx + vy * vy);
+	vx *= s;
+	vy *= s;
+	x1 = x1 + R * vx;
+	y1 = y1 + R * vy;
+}
+void drawCircle(int x, int y, int R) 
+{
+	//glColor3f(0.0, 191.0, 255.0); это цветные круги
+	glColor3f(1.0, 1.0, 1.0); //это черно-белое
+	float x1, y1;
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < 360; i++)
+	{
+		float theta = 2.0f * 3.1415926f * float(i) / float(360);
+		y1 = R * cos(theta) + y;
+		x1 = R * sin(theta) + x;;
+		glVertex2f(x1, y1);
+	}
+	glEnd();
+
+	glColor3f(0.0f, 0.0f, 0.0f);
+	float x2, y2;
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < 360; i++)
+	{
+		float theta = 2.0f * 3.1415926f * float(i) / float(360);
+		y2 = R * cos(theta) + y;
+		x2 = R * sin(theta) + x;
+		glVertex2f(x2, y2);
+	}
+	glEnd();
+}
+
+void drawText(int nom, int x1, int y1)
+{
+
+	GLvoid* font = GLUT_BITMAP_HELVETICA_18;
+	string s;
+	stringstream out;
+	out << nom;
+	s = out.str();
+	//string s = to_string(nom);
+
+
+	glRasterPos2i(x1 - 5, y1 - 5);
+	for (int j = 0; j < s.length(); j++)
+		glutBitmapCharacter(font, s[j]);
+}
+
+void drawLine(int text, int x0, int y0, int x1, int y1) 
+{
+	if((mdown == 1)&&(x0 == 50)){
+	glColor3f(0.0, 0.0, 128.0); //это цветные ребра
+	}else{
+	glColor3i(0, 0, 0); //это черно-белое
+}
+	glBegin(GL_LINES);
+	glVertex2i(x0, y0);
+	glVertex2i(x1, y1);
+	glEnd();
+	drawText(text, (x0 + x1) / 2 + 15, (y0 + y1) / 2 - 18);
+
+	float vx = x0 - x1;
+	float vy = y0 - y1;
+	float s = 1.0f / sqrt(vx * vx + vy * vy);
+	vx *= s;
+	vy *= s;
+	x1 = x1 + R * vx;
+	y1 = y1 + R * vy;
+
+	if(mdown == 1){
+	glColor3f(0.0, 0.0, 128.0);// это цветные
+	}else{
+	glColor3i(0, 0, 0); //это черно-белое
+	}
+	glBegin(GL_TRIANGLES);
+	glVertex2f(x1, y1);
+	glVertex2f(x1 + 10 * (vx + vy), y1 + 10 * (vy - vx));
+	glVertex2f(x1 + 10 * (vx - vy), y1 + 10 * (vy + vx));
+	glEnd();
+}
+
+void drawVertex(int n)
+{
+	for (int i = 0; i < n; i++) {
+		drawCircle(vertC[i].x, vertC[i].y, R);
+		drawText(i + 1, vertC[i].x, vertC[i].y);
+	}
+}
+
+static void display()
+{
+	glShadeModel(GL_SMOOTH);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, WinW, 0, WinH); 
+	glViewport(0, 0, WinW, WinH);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	graph.drawGraph();
+	void *font= GLUT_BITMAP_8_BY_13;
+	
+drawMainText(0,0,0,font,(char *)"GLUT lib @ Iformatika TNU");
+	//drawBlueLine(0, 0, 0, 30, 30); 
+	glutSwapBuffers();
+}
+/*
+void drawMainText(int nom, int x1, int y1)
+{
+
+	GLvoid* font = GLUT_BITMAP_HELVETICA_18;
+	string s;
+	stringstream out;
+	out << nom;
+	s = out.str();
+	//string s = to_string(nom);
+
+
+	glRasterPos2i(x1 - 5, y1 - 5);
+	for (int j = 0; j < s.length(); j++)
+		glutBitmapCharacter(font, s[j]);
+}*/
+
+
+
+void timer(int = 0) // Таймер игры(промежуток времени, в котором будет производится все процессы)
+{
+  display(); // Вызов функций  
+  //tick();
+  
+
+ 
+  glutTimerFunc(100, timer, 0); // новый вызов таймера( 100 - промежуток времени(в милисекундах), через который он будет вызыватся, timer - вызываемый паблик)
+}
+
+template<class T>
+void Graph<T>::drawGraph()
+{
+	int n = vertList.size();
+	Radius(n);
+	Coords();
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			int a = Matrix[i][j];
+			if (a != 0)
+				drawLine(a, vertC[i].x, vertC[i].y, vertC[j].x, vertC[j].y);
+			if (a == Matrix[j][i] && a != 0)
+				drawLine(a, vertC[j].x, vertC[j].y, vertC[i].x, vertC[i].y);
+		}
+	}
+	drawVertex(n);
+}
+
+static void reshape(int w, int h)
+{
+	WinW = w;
+	WinH = h;
+	glViewport(0, 0, (GLsizei)WinW, (GLsizei)WinH);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, (GLdouble)WinW, 0, (GLdouble)WinH);
+	glutPostRedisplay();
+}
+
